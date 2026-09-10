@@ -23,7 +23,7 @@ public class AuthController : ControllerBase
         try
         {
             var resultado = await _authService.RegistrarUsuarioAsync(request);
-            return CreatedAtAction(nameof(ObtenerPerfil), new { id_usuario = resultado.IdUsuario }, resultado);
+            return CreatedAtAction(nameof(ObtenerPerfil), new { id = resultado.Id }, resultado);
         }
         catch (ArgumentException ex)
         {
@@ -55,14 +55,14 @@ public class AuthController : ControllerBase
             }
     }
 
-    [HttpGet("perfil/{id_usuario:int}")]
+    [HttpGet("perfil/{id:int}")]
     [ProducesResponseType(typeof(UsuarioResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ObtenerPerfil(int id_usuario)
+    public async Task<IActionResult> ObtenerPerfil(int id)
     {
         try
         {
-            var perfil = await _authService.ObtenerPerfilAsync(id_usuario);
+            var perfil = await _authService.ObtenerPerfilAsync(id);
             return Ok(perfil);
         }
         catch (KeyNotFoundException ex)

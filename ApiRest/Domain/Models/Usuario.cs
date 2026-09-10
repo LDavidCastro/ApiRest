@@ -9,20 +9,24 @@ public class Usuario
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int id_usuario { get; set; }
+    public int id { get; set; }
 
     [Required]
-    [StringLength(100)]
-    public string nombre_completo { get; set; } = string.Empty;
+    [StringLength(50)]
+    public string nombre { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(50)]
+    public string apellido { get; set; } = string.Empty;
 
     [Required]
     [EmailAddress]
     [StringLength(150)]
-    public string email { get; set; } = string.Empty;
+    public string correo_electronico { get; set; } = string.Empty;
 
     [Required]
     [JsonIgnore]
-    public string password_hash { get; set; } = string.Empty;
+    public string contrasena_hash { get; set; } = string.Empty;
 
     [Required]
     [StringLength(50)]

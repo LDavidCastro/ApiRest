@@ -4,14 +4,17 @@ using System.Text.Json.Serialization;
 
 public class UsuarioResponse
 {
-    [JsonPropertyName("id_usuario")]
-    public int IdUsuario { get; set; }
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
 
-    [JsonPropertyName("nombre_completo")]
-    public string NombreCompleto { get; set; } = string.Empty;
+    [JsonPropertyName("nombre")]
+    public string Nombre { get; set; } = string.Empty;
 
-    [JsonPropertyName("email")]
-    public string Email { get; set; } = string.Empty;
+    [JsonPropertyName("apellido")]
+    public string Apellido { get; set; } = string.Empty;
+
+    [JsonPropertyName("correo_electronico")]
+    public string CorreoElectronico { get; set; } = string.Empty;
 
     [JsonPropertyName("rol")]
     public string Rol { get; set; } = string.Empty;

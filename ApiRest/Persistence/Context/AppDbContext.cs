@@ -19,24 +19,29 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("usuarios");
 
-            entity.HasKey(e => e.id_usuario);
+            entity.HasKey(e => e.id);
 
-            entity.Property(e => e.id_usuario)
-                .HasColumnName("id_usuario")
+            entity.Property(e => e.id)
+                .HasColumnName("id")
                 .ValueGeneratedOnAdd();
 
-            entity.Property(e => e.nombre_completo)
-                .HasColumnName("nombre_completo")
+            entity.Property(e => e.nombre)
+                .HasColumnName("nombre")
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(50);
 
-            entity.Property(e => e.email)
-                .HasColumnName("email")
+            entity.Property(e => e.apellido)
+                .HasColumnName("apellido")
+                .IsRequired()
+                .HasMaxLength(50);
+
+            entity.Property(e => e.correo_electronico)
+                .HasColumnName("correo_electronico")
                 .IsRequired()
                 .HasMaxLength(150);
 
-            entity.Property(e => e.password_hash)
-                .HasColumnName("password_hash")
+            entity.Property(e => e.contrasena_hash)
+                .HasColumnName("contrasena_hash")
                 .IsRequired();
 
             entity.Property(e => e.rol)
@@ -61,9 +66,9 @@ public class AppDbContext : DbContext
             entity.Property(e => e.ultimo_acceso)
                 .HasColumnName("ultimo_acceso");
 
-            entity.HasIndex(e => e.email)
+            entity.HasIndex(e => e.correo_electronico)
                 .IsUnique()
-                .HasDatabaseName("IX_usuarios_email");
+                .HasDatabaseName("IX_usuarios_correo_electronico");
         });
     }
 }

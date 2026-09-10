@@ -14,16 +14,16 @@ public class UsuarioRepository : IUsuarioRepository
         _context = context;
     }
 
-    public async Task<Usuario?> ObtenerPorIdAsync(int id_usuario)
+    public async Task<Usuario?> ObtenerPorIdAsync(int id)
     {
         return await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.id_usuario == id_usuario);
+            .FirstOrDefaultAsync(u => u.id == id);
     }
 
-    public async Task<Usuario?> ObtenerPorEmailAsync(string email)
+    public async Task<Usuario?> ObtenerPorEmailAsync(string correo_electronico)
     {
         return await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.email == email && u.activo);
+            .FirstOrDefaultAsync(u => u.correo_electronico == correo_electronico && u.activo);
     }
 
     public async Task<IEnumerable<Usuario>> ObtenerTodosAsync()
@@ -48,10 +48,10 @@ public class UsuarioRepository : IUsuarioRepository
         return usuario;
     }
 
-    public async Task<bool> EliminarAsync(int id_usuario)
+    public async Task<bool> EliminarAsync(int id)
     {
         var usuario = await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.id_usuario == id_usuario);
+            .FirstOrDefaultAsync(u => u.id == id);
 
         if (usuario == null)
             return false;
@@ -62,9 +62,9 @@ public class UsuarioRepository : IUsuarioRepository
         return true;
     }
 
-    public async Task<bool> ExisteEmailAsync(string email)
+    public async Task<bool> ExisteEmailAsync(string correo_electronico)
     {
         return await _context.Usuarios
-            .AnyAsync(u => u.email == email && u.activo);
+            .AnyAsync(u => u.correo_electronico == correo_electronico && u.activo);
     }
 }

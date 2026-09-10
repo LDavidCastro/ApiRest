@@ -4,11 +4,14 @@ using System.Text.Json.Serialization;
 
 public class RegistroRequest
 {
-    [JsonPropertyName("nombre_completo")]
-    public string NombreCompleto { get; set; } = string.Empty;
+    [JsonPropertyName("nombre")]
+    public string Nombre { get; set; } = string.Empty;
 
-    [JsonPropertyName("email")]
-    public string Email { get; set; } = string.Empty;
+    [JsonPropertyName("apellido")]
+    public string Apellido { get; set; } = string.Empty;
+
+    [JsonPropertyName("correo_electronico")]
+    public string CorreoElectronico { get; set; } = string.Empty;
 
     [JsonPropertyName("password")]
     public string Password { get; set; } = string.Empty;

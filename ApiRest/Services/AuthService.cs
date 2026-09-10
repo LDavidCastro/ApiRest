@@ -24,16 +24,17 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> RegistrarUsuarioAsync(RegistroRequest request)
     {
-        if (await _usuarioRepository.ExisteEmailAsync(request.Email))
+        if (await _usuarioRepository.ExisteEmailAsync(request.CorreoElectronico))
         {
             throw new ArgumentException("El email ya está registrado");
         }
 
         var usuario = new Usuario
         {
-            nombre_completo = request.NombreCompleto,
-            email = request.Email,
-            password_hash = BCrypt.HashPassword(request.Password),
+            nombre = request.Nombre,
+            apellido = request.Apellido,
+            correo_electronico = request.CorreoElectronico,
+            contrasena_hash = BCrypt.HashPassword(request.Password),
             rol = request.Rol
         };
 
@@ -42,9 +43,10 @@ public class AuthService : IAuthService
 
         return new AuthResponse
         {
-            IdUsuario = usuarioCreado.id_usuario,
-            NombreCompleto = usuarioCreado.nombre_completo,
-            Email = usuarioCreado.email,
+            Id = usuarioCreado.id,
+            Nombre = usuarioCreado.nombre,
+            Apellido = usuarioCreado.apellido,
+            CorreoElectronico = usuarioCreado.correo_electronico,
             Rol = usuarioCreado.rol,
             Token = token,
             FechaExpiracion = DateTime.UtcNow.AddHours(24)
@@ -53,9 +55,9 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> AutenticarUsuarioAsync(LoginRequest request)
     {
-        var usuario = await _usuarioRepository.ObtenerPorEmailAsync(request.Email);
+        var usuario = await _usuarioRepository.ObtenerPorEmailAsync(request.CorreoElectronico);
 
-        if (usuario == null || !BCrypt.Verify(request.Password, usuario.password_hash))
+        if (usuario == null || !BCrypt.Verify(request.Password, usuario.contrasena_hash))
         {
             throw new UnauthorizedAccessException("Credenciales inválidas");
         }
@@ -67,18 +69,19 @@ public class AuthService : IAuthService
 
         return new AuthResponse
         {
-            IdUsuario = usuario.id_usuario,
-            NombreCompleto = usuario.nombre_completo,
-            Email = usuario.email,
+            Id = usuario.id,
+            Nombre = usuario.nombre,
+            Apellido = usuario.apellido,
+            CorreoElectronico = usuario.correo_electronico,
             Rol = usuario.rol,
             Token = token,
             FechaExpiracion = DateTime.UtcNow.AddHours(24)
         };
     }
 
-    public async Task<UsuarioResponse> ObtenerPerfilAsync(int id_usuario)
+    public async Task<UsuarioResponse> ObtenerPerfilAsync(int id)
     {
-        var usuario = await _usuarioRepository.ObtenerPorIdAsync(id_usuario);
+        var usuario = await _usuarioRepository.ObtenerPorIdAsync(id);
 
         if (usuario == null)
         {
@@ -87,9 +90,10 @@ public class AuthService : IAuthService
 
         return new UsuarioResponse
         {
-            IdUsuario = usuario.id_usuario,
-            NombreCompleto = usuario.nombre_completo,
-            Email = usuario.email,
+            Id = usuario.id,
+            Nombre = usuario.nombre,
+            Apellido = usuario.apellido,
+            CorreoElectronico = usuario.correo_electronico,
             Rol = usuario.rol,
             Activo = usuario.activo,
             FechaCreacion = usuario.fecha_creacion,
@@ -108,9 +112,9 @@ public class AuthService : IAuthService
 
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, usuario.id_usuario.ToString()),
-            new Claim(ClaimTypes.Email, usuario.email),
-            new Claim(ClaimTypes.Name, usuario.nombre_completo),
+            new Claim(ClaimTypes.NameIdentifier, usuario.id.ToString()),
+            new Claim(ClaimTypes.Email, usuario.correo_electronico),
+            new Claim(ClaimTypes.Name, usuario.nombre + " " + usuario.apellido),
             new Claim(ClaimTypes.Role, usuario.rol)
         };
 
