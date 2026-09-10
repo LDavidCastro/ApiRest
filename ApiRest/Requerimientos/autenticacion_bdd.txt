@@ -1,0 +1,125 @@
+# Escenarios de Prueba BDD para Módulo de Autenticación
+
+## Funcionalidad: Registro de Usuario
+
+### Escenario: Registro exitoso de nuevo usuario
+**Given** No existe un usuario con el email "juan.perez@example.com"
+**When** El usuario envía una solicitud de registro con:
+  - nombre_completo: "Juan Pérez"
+  - email: "juan.perez@example.com"
+  - password: "Password123!"
+  - rol: "usuario"
+**Then** El sistema debe:
+  - Crear un nuevo usuario en la base de datos
+  - Hashear el password de forma segura
+  - Asignar un id_usuario único
+  - Retornar un código 201 (Created)
+  - Incluir un token JWT válido en la respuesta
+  - Establecer activo=true por defecto
+  - Registrar fecha_creacion con timestamp actual
+
+### Escenario: Registro con email ya existente
+**Given** Ya existe un usuario con el email "maria.gomez@example.com"
+**When** Un nuevo usuario intenta registrarse con el mismo email "maria.gomez@example.com"
+**Then** El sistema debe:
+  - Retornar un código 400 (Bad Request)
+  - Incluir mensaje "El email ya está registrado"
+  - No crear un nuevo registro en la base de datos
+
+### Escenario: Registro con datos inválidos
+**Given** El usuario envía datos incompletos
+**When** La solicitud de registro no incluye el campo "email"
+**Then** El sistema debe:
+  - Retornar un código 400 (Bad Request)
+  - No procesar el registro
+  - Validar todos los campos requeridos
+
+## Funcionalidad: Autenticación (Login)
+
+### Escenario: Login exitoso con credenciales válidas
+**Given** Existe un usuario con:
+  - email: "ana.lopez@example.com"
+  - password: "SecurePass456"
+  - activo: true
+**When** El usuario envía credenciales correctas
+**Then** El sistema debe:
+  - Verificar el password con BCrypt
+  - Actualizar el campo ultimo_acceso
+  - Generar un token JWT válido por 24 horas
+  - Retornar un código 200 (OK)
+  - Incluir información del perfil en la respuesta
+
+### Escenario: Login con email incorrecto
+**Given** No existe usuario con email "noexiste@example.com"
+**When** Se intenta autenticar con ese email
+**Then** El sistema debe:
+  - Retornar un código 401 (Unauthorized)
+  - No generar ningún token
+  - Mostrar mensaje "Credenciales inválidas"
+
+### Escenario: Login con password incorrecto
+**Given** Existe usuario con email "carlos.ruiz@example.com" y password "CorrectPass789"
+**When** Se intenta autenticar con password "IncorrectPass123"
+**Then** El sistema debe:
+  - Retornar un código 401 (Unauthorized)
+  - No actualizar ultimo_acceso
+  - No generar token
+  - Mostrar mensaje "Credenciales inválidas"
+
+### Escenario: Login con usuario inactivo
+**Given** Existe usuario con:
+  - email: "inactivo@example.com"
+  - activo: false
+**When** Se intenta autenticar con credenciales correctas
+**Then** El sistema debe:
+  - Retornar un código 401 (Unauthorized)
+  - No permitir el acceso
+  - No generar token
+
+## Funcionalidad: Consulta de Perfil
+
+### Escenario: Consulta exitosa de perfil
+**Given** Existe usuario con id_usuario = 123
+**When** Se solicita el perfil de usuario con id_usuario = 123
+**Then** El sistema debe:
+  - Retornar un código 200 (OK)
+  - Incluir todos los datos del perfil
+  - No incluir el password_hash en la respuesta
+  - Formatear fechas correctamente
+
+### Escenario: Consulta de perfil inexistente
+**Given** No existe usuario con id_usuario = 999
+**When** Se solicita el perfil de usuario con id_usuario = 999
+**Then** El sistema debe:
+  - Retornar un código 404 (Not Found)
+  - Mostrar mensaje "Usuario no encontrado"
+
+## Requisitos de Seguridad
+
+### Escenario: Validación de password segura
+**Given** Sistema de autenticación implementado
+**When** Se registra un nuevo usuario
+**Then** El password debe:
+  - Ser hasheado con BCrypt
+  - Nunca almacenarse en texto plano
+  - Ser único por cada usuario
+  - Resistir ataques de fuerza bruta
+
+### Escenario: Protección de tokens JWT
+**Given** Token JWT generado
+**When** Token expira después de 24 horas
+**Then** El sistema debe:
+  - Rechazar tokens expirados
+  - Validar firma del token
+  - Verificar issuer y audience
+  - Incluir claims de usuario
+
+## Patrones de Nomenclatura
+
+### Escenario: Formato snake_case en JSON
+**Given** API REST con snake_case
+**When** Se envía/recibe cualquier JSON
+**Then** Todas las propiedades deben:
+  - Usar snake_case (ej: "id_usuario", "nombre_completo")
+  - Ser consistentes en requests y responses
+  - Seguir convención de nomenclatura establecida
