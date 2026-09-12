@@ -22,8 +22,14 @@ public class UsuarioRepository : IUsuarioRepository
 
     public async Task<Usuario?> ObtenerPorEmailAsync(string correo_electronico)
     {
-        return await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.correo_electronico == correo_electronico && u.activo);
+        // TEMPORAL: Para diagnóstico, mostrar en consola qué se está buscando
+        Console.WriteLine($"DEBUG: Buscando usuario con email: '{correo_electronico}'");
+        
+        var usuario = await _context.Usuarios
+            .FirstOrDefaultAsync(u => u.correo_electronico == correo_electronico);
+        
+        Console.WriteLine($"DEBUG: Usuario encontrado: {usuario?.id ?? 0}, Activo: {usuario?.activo ?? false}");
+        return usuario;
     }
 
     public async Task<IEnumerable<Usuario>> ObtenerTodosAsync()

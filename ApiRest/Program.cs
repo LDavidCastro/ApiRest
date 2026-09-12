@@ -21,6 +21,17 @@ builder.Services.AddScoped<ApiRest.Domain.IRepositories.IUsuarioRepository, ApiR
 // Add services
 builder.Services.AddScoped<ApiRest.Domain.IServices.IAuthService, ApiRest.Services.AuthService>();
 
+// Add CORS policy for Angular app
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularClient", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Add JWT authentication
 builder.Services.AddAuthentication()
     .AddJwtBearer(options =>
@@ -53,6 +64,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Apply CORS policy before authentication and authorization
+app.UseCors("AngularClient");
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -55,13 +55,26 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> AutenticarUsuarioAsync(LoginRequest request)
     {
+        Console.WriteLine($"DEBUG: Autenticando usuario con email: {request.CorreoElectronico}");
+
         var usuario = await _usuarioRepository.ObtenerPorEmailAsync(request.CorreoElectronico);
 
-        if (usuario == null || !BCrypt.Verify(request.Password, usuario.contrasena_hash))
+        if (usuario == null)
         {
+            Console.WriteLine($"DEBUG: Usuario no encontrado con email: {request.CorreoElectronico}");
             throw new UnauthorizedAccessException("Credenciales inválidas");
         }
 
+        Console.WriteLine($"DEBUG: Usuario encontrado: ID={usuario.id}, Email={usuario.correo_electronico}");
+        Console.WriteLine($"DEBUG: Hash almacenado: {usuario.contrasena_hash}");
+
+        if (!BCrypt.Verify(request.Password, usuario.contrasena_hash))
+        {
+            Console.WriteLine($"DEBUG: Contraseña incorrecta para usuario: {usuario.id}");
+            throw new UnauthorizedAccessException("Credenciales inválidas");
+        }
+
+        Console.WriteLine($"DEBUG: Autenticación exitosa para usuario: {usuario.id}");
         usuario.ultimo_acceso = DateTime.UtcNow;
         await _usuarioRepository.ActualizarAsync(usuario);
 
